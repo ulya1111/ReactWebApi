@@ -12,21 +12,31 @@ export default function App() {
   }, []);
 
     const save = async () => {
-        const payload = { id: form.id, name: form.name, value: form.value };
-
         try {
             if (form.id) {
-                await axios.put(`${API}/${form.id}`, payload);
+                
+                await axios.put(`${API}/${form.id}`, {
+                    id: form.id,
+                    name: form.name,
+                    value: form.value,
+                });
             } else {
-                await axios.post(API, payload);
+                
+                await axios.post(API, {
+                    name: form.name,
+                    value: form.value,
+                });
             }
+
             setForm({ id: "", name: "", value: "" });
+
             const r = await axios.get(API);
             setItems(r.data);
         } catch (e) {
             console.error(e);
         }
     };
+
 
   const remove = async (id) => {
     try {
@@ -53,8 +63,8 @@ export default function App() {
           value={form.value}
           onChange={(e) => setForm({ ...form, value: e.target.value })}
         />
-        <button className="btn" onClick={save}>
-          {form.id ? "Обновить" : "Добавить"}
+        <button type="button" className="btn" onClick={save}>
+            {form.id ? "Обновить" : "Добавить"}
         </button>
       </div>
 

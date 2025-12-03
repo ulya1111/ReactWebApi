@@ -29,6 +29,7 @@ namespace ReactWebApi.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Item item)
         {
+            item.Id = 0; 
             _db.Items.Add(item);
             await _db.SaveChangesAsync();
             return CreatedAtAction(nameof(GetById), new { id = item.Id }, item);
