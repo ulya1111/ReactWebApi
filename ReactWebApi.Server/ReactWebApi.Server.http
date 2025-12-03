@@ -1,0 +1,31 @@
+@Host = http://localhost:5285
+
+### Получить все элементы
+GET {{Host}}/items
+Accept: application/json
+
+### Получить элемент по ID
+GET {{Host}}/items/1
+Accept: application/json
+
+### Создать новый элемент
+POST {{Host}}/items
+Content-Type: application/json
+
+{
+  "name": "Test item",
+  "value": "Some value"
+}
+
+### Обновить элемент
+PUT {{Host}}/items/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "Updated name",
+  "value": "Updated value"
+}
+
+### Удалить элемент
+DELETE {{Host}}/items/1

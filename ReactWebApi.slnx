@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="reactwebapi.client/reactwebapi.client.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="ReactWebApi.Server/ReactWebApi.Server.csproj" />
+</Solution>
