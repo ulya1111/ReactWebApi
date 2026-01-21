@@ -1,149 +1,325 @@
-﻿/* Глобальный стиль */
-body {
-    font-family: Inter, sans-serif;
-    background: linear-gradient(135deg, #72acf2, #2dd6fc);
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
+﻿/* --- 1. ГЛОБАЛЬНЫЕ НАСТРОЙКИ И ПЕРЕМЕННЫЕ --- */
+:root {
+    --primary-color: #007bff;
+    --primary-hover-color: #0056b3;
+    --success-color: #28a745;
+    --success-hover-color: #218838;
+    --danger-color: #dc3545;
+    --danger-hover-color: #c82333;
+    --background-color: #f8f9fa;
+    --card-background-color: #ffffff;
+    --text-color: #212529;
+    --border-color: #dee2e6;
+    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
-/* Центровщик SPA */
-.centered-layout {
+body {
+    margin: 0;
+    font-family: var(--font-family);
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+
+/* --- 2. ОСНОВНЫЕ МАКЕТЫ И ВЫРАВНИВАНИЕ --- */
+/* Этот контейнер - самый верхний уровень, он отвечает за выравнивание на ВСЕЙ странице */
+.layout-wrapper {
+    width: 100%;
+    min-height: 100vh;
+    padding: 2rem;
+    box-sizing: border-box;
     display: flex;
-    flex-direction: column;
+    /* Логика центрирования будет в режимах ниже */
+}
+
+/* Режим для страниц входа/регистрации (все по центру) */
+.auth-mode {
+    justify-content: center;
     align-items: center;
 }
 
-/* Основная обёртка */
-.app-wrapper {
-    margin-top: 40px;
-    width: 800px;
-    background: #ffffff;
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 10px 35px rgba(0,0,0,0.3);
-    animation: fadeIn 1s ease;
+/* Режим для основного приложения (контент в центре, но прижат к верху) */
+.app-mode {
+    justify-content: center;
+    align-items: flex-start;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(40px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* Макет для главной страницы (сайдбар + основной контент) */
+.home-layout {
+    display: flex;
+    gap: 2rem;
+    width: 100%;
+    max-width: 1400px;
+    flex-grow: 1;
 }
 
-/* Заголовок */
-.title {
+
+/* --- 3. БЛОК АВТОРИЗАЦИИ (ВХОД И РЕГИСТРАЦИЯ) --- */
+.auth-container {
+    width: 100%;
+    max-width: 450px;
+    background: var(--card-background-color);
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.auth-tabs {
+    display: flex;
+    background-color: #f8f9fa;
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 1rem;
     text-align: center;
-    margin-bottom: 25px;
-    font-size: 28px;
-    font-weight: 700;
-    color: #333;
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--primary-color);
+    text-decoration: none;
+    border-bottom: 3px solid transparent;
+    transition: background-color 0.2s, border-color 0.2s;
 }
 
-/* Карточка формы */
-.form-card {
-    background: #f8f9fc;
-    padding: 20px;
-    border-radius: 14px;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
-    margin-bottom: 25px;
+    .auth-tab:hover {
+        background-color: #e9ecef;
+    }
+
+    .auth-tab.active {
+        color: var(--text-color);
+        border-bottom-color: var(--primary-color);
+    }
+
+
+/* --- 4. ГЛАВНАЯ СТРАНИЦА (САЙДБАР И КОНТЕНТ) --- */
+.sidebar {
+    flex-basis: 220px;
+    flex-shrink: 0;
+    background-color: var(--card-background-color);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    position: sticky;
+    top: 2rem;
+    align-self: flex-start;
+}
+
+    .sidebar h3 {
+        margin-top: 0;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .sidebar ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .sidebar li {
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s, color 0.2s;
+        font-weight: 500;
+    }
+
+        .sidebar li:hover {
+            background-color: #e9ecef;
+        }
+
+        .sidebar li.active {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+        }
+
+/* Блок справа (заголовок + таблица) */
+.main-content {
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    animation: fadeIn 0.8s ease;
+    min-width: 0; 
+    background: var(--card-background-color);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
 }
 
-/* Кастомный инпут */
-.input {
-    padding: 12px 14px;
-    border-radius: 10px;
-    border: 2px solid #cdd6e0;
-    font-size: 15px;
-    outline: none;
-    transition: 0.25s;
-    background: #ffffff;
+.main-content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
 }
 
-    .input:focus {
-        border-color: #4d8dff;
-        box-shadow: 0 0 8px rgba(77,141,255,0.4);
-        transform: scale(1.02);
+    .main-content-header .title {
+        margin: 0;
     }
 
-/* Кастомная кнопка */
-.btn {
-    padding: 12px 16px;
-    border-radius: 10px;
-    cursor: pointer;
-    border: none;
-    font-size: 16px;
-    background: #4d8dff;
-    color: #fff;
-    transition: 0.25s;
-    font-weight: 600;
-}
 
-    .btn:hover {
-        background: #346fe0;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(77,141,255,0.4);
-    }
-
-/* Таблица */
-.table {
+/* --- 5. СТИЛИ ДЛЯ ТАБЛИЦЫ (TanStack Table) --- */
+.table-container {
     width: 100%;
-    border-collapse: collapse;
-    background: white;
-    overflow: hidden;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    animation: fadeIn 1s ease;
+    flex-grow: 1;
+    overflow: auto; 
+    display: flex; 
 }
 
-    .table th {
-        background: #f0f3f8;
-        padding: 14px;
-        font-size: 15px;
-        color: #444;
-        border-bottom: 1px solid #dce2eb;
+.tanstack-table {
+    width: 100%;
+    height: 100%; 
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+    .tanstack-table th,
+    .tanstack-table td {
+        border: 1px solid var(--border-color);
+        padding: 12px;
+        text-align: left;
+        white-space: nowrap;
     }
 
-    .table td {
-        padding: 12px;
-        border-bottom: 1px solid #eef1f5;
+    .tanstack-table th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+        position: sticky; /* "Прилипающие" заголовки */
+        top: 0;
+        z-index: 1;
+    }
+
+    .tanstack-table tbody tr:nth-of-type(even) {
+        background-color: #f8f9fa; /* "Зебра" */
+    }
+
+    .tanstack-table tbody tr:hover {
+        background-color: #e9ecef;
+    }
+
+
+/* --- 6. ОБЩИЕ КОМПОНЕНТЫ (ФОРМЫ, КНОПКИ) --- */
+.form-card {
+    box-shadow: none;
+    border-radius: 0;
+    max-width: 100%;
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.form-group {
+    width: 100%;
+}
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
         font-size: 14px;
     }
 
-    .table tr:hover {
-        background: #f7faff;
-        transition: 0.2s;
-    }
-
-/* Кнопки действий */
-.edit {
-    background: #ffc107;
+.input {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    box-sizing: border-box;
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-    .edit:hover {
-        background: #e0a800;
-        transform: scale(1.05);
+    .input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
     }
 
-.delete {
-    background: #dc3545;
+.btn {
+    padding: 10px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    background-color: var(--primary-color);
     color: white;
+    text-decoration: none;
+    text-align: center;
 }
 
-    .delete:hover {
-        background: #bb2d3b;
-        transform: scale(1.05);
+    .btn:hover {
+        background-color: var(--primary-hover-color);
+    }
+
+    .btn:active {
+        transform: translateY(1px);
+    }
+
+.header-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.main-content-header .btn, .nav-btn {
+    width: auto;
+}
+
+.btn.delete {
+    background-color: var(--danger-color);
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+    .btn.delete:hover {
+        background-color: var(--danger-hover-color);
+    }
+
+.btn[style*="28a745"] { /* Стиль для кнопки "Сохранить" */
+    background-color: var(--success-color) !important;
+}
+
+    .btn[style*="28a745"]:hover {
+        background-color: var(--success-hover-color) !important;
+    }
+
+/*Report-блок*/
+
+.report-container {
+    width: 100%;
+    background-color: var(--card-background-color);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.report-body {
+    padding: 2rem;
+    text-align: center;
+    color: #6c757d;
+}
+
+/* Charts-блок */
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.chart-container {
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+    .chart-container h3 {
+        text-align: center;
+        margin-top: 0;
     }

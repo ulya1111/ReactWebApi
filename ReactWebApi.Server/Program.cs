@@ -1,15 +1,18 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using ReactWebApi.Server.Data;
-using ReactWebApi.Server.Models;
-using System;
+using System.Text;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-// SQLite
-builder.Services.AddDbContext<AppDbContext>(opts =>
-    opts.UseSqlite("Data Source=items.db"));
+// 1. PostgreSQL
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// 2. Cors
 builder.Services.AddCors(opts =>
 {
     opts.AddPolicy("Default", p =>
@@ -22,47 +25,41 @@ builder.Services.AddCors(opts =>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
+// 3.  JWT токен
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        var appSettingsToken = builder.Configuration.GetSection("AppSettings:Token").Value;
+        if (appSettingsToken is null)
+            throw new Exception("AppSettings Token is null!");
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettingsToken)),
+            ValidateIssuer = false,
+            ValidateAudience = false
+        };
+    });
+
 var app = builder.Build();
 
 app.UseCors("Default");
-
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+
 app.UseRouting();
-
 app.UseStaticFiles();
-
 app.MapControllers();
-
 app.MapFallbackToFile("index.html");
 
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
     db.Database.Migrate();
-
-    if (!db.Items.Any())
-    {
-        db.Items.AddRange(
-            new Item
-            {
-                Name = "Clean Code",
-                Value = "Robert C. Martin (Best practices for writing clean, maintainable code)"
-            },
-            new Item
-            {
-                Name = "Design Patterns",
-                Value = "Erich Gamma et al. (Classic book about software architecture patterns)"
-            },
-            new Item
-            {
-                Name = "The Pragmatic Programmer",
-                Value = "Andrew Hunt & David Thomas"
-            }
-        );
-
-        db.SaveChanges();
-    }
 }
 
 
