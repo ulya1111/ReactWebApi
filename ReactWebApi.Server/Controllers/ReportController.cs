@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReactWebApi.Server.Data;
-using ReactWebApi.Server.Models; // <-- Добавьте этот using
+using ReactWebApi.Server.Models; 
 
 namespace ReactWebApi.Server.Controllers
 {

@@ -23,7 +23,7 @@ namespace ReactWebApi.Server.Controllers
                 "orders" => await _context.Orders.ToListAsync(),
                 _ => null
             };
-            if (data == null) return NotFound($"Table '{tableName}' not found.");
+            if (data == null) return NotFound($"Таблица '{tableName}' не найдена.");
             return Ok(data);
         }
 
@@ -33,7 +33,7 @@ namespace ReactWebApi.Server.Controllers
             switch (tableName.ToLower())
             {
                 case "items":
-                    if (!long.TryParse(id, out var itemId)) return BadRequest("Invalid ID format.");
+                    if (!long.TryParse(id, out var itemId)) return BadRequest("Неверный формат ID.");
                     var item = await _context.Items.FindAsync(itemId);
                     if (item == null) return NotFound();
                     foreach (var property in updates.EnumerateObject())
@@ -44,7 +44,7 @@ namespace ReactWebApi.Server.Controllers
                     _context.Entry(item).State = EntityState.Modified;
                     break;
                 case "users":
-                    if (!int.TryParse(id, out var userId)) return BadRequest("Invalid ID format.");
+                    if (!int.TryParse(id, out var userId)) return BadRequest("Неверный формат ID.");
                     var user = await _context.Users.FindAsync(userId);
                     if (user == null) return NotFound();
                     foreach (var property in updates.EnumerateObject())
@@ -54,7 +54,7 @@ namespace ReactWebApi.Server.Controllers
                     _context.Entry(user).State = EntityState.Modified;
                     break;
                 case "orders":
-                    if (!int.TryParse(id, out var orderId)) return BadRequest("Invalid ID format.");
+                    if (!int.TryParse(id, out var orderId)) return BadRequest("Неверный формат ID.");
                     var order = await _context.Orders.FindAsync(orderId);
                     if (order == null) return NotFound();
                     foreach (var property in updates.EnumerateObject())
@@ -65,7 +65,7 @@ namespace ReactWebApi.Server.Controllers
                     }
                     _context.Entry(order).State = EntityState.Modified;
                     break;
-                default: return NotFound($"Table '{tableName}' not found.");
+                default: return NotFound($"Таблица '{tableName}' не найдена.");
             }
             await _context.SaveChangesAsync();
             return NoContent();
@@ -82,7 +82,7 @@ namespace ReactWebApi.Server.Controllers
                     var newItem = new Item();
                     if (newRowData.TryGetProperty("name", out var name)) newItem.Name = name.GetString() ?? "";
                     if (newRowData.TryGetProperty("value", out var value)) newItem.Value = value.GetString();
-                    if (string.IsNullOrEmpty(newItem.Name)) return BadRequest("Name property is required.");
+                    if (string.IsNullOrEmpty(newItem.Name)) return BadRequest("Поле 'Название' обязательно для заполнения.");
                     _context.Items.Add(newItem);
                     newEntity = newItem;
                     break;
@@ -90,7 +90,7 @@ namespace ReactWebApi.Server.Controllers
                 case "users":
                     var newUser = new User();
                     if (newRowData.TryGetProperty("username", out var username)) newUser.Username = username.GetString() ?? "";
-                    if (string.IsNullOrEmpty(newUser.Username)) return BadRequest("Username property is required.");
+                    if (string.IsNullOrEmpty(newUser.Username)) return BadRequest("Поле 'Название' обязательно для заполнения.");
                     _context.Users.Add(newUser);
                     newEntity = newUser;
                     break;
@@ -104,13 +104,13 @@ namespace ReactWebApi.Server.Controllers
                         if (int.TryParse(qtyString, out int qtyInt)) newOrder.Quantity = qtyInt;
                     }
                     if (newRowData.TryGetProperty("status", out var statusProp)) newOrder.Status = statusProp.GetString();
-                    if (string.IsNullOrEmpty(newOrder.Item)) return BadRequest("Item property is required.");
+                    if (string.IsNullOrEmpty(newOrder.Item)) return BadRequest("Поле 'Предметы' обязательно для заполнения.");
                     _context.Orders.Add(newOrder);
                     newEntity = newOrder;
                     break;
 
                 default:
-                    return NotFound($"Table '{tableName}' not found.");
+                    return NotFound($"Таблица '{tableName}' не найдена.");
             }
 
             await _context.SaveChangesAsync();
@@ -125,25 +125,25 @@ namespace ReactWebApi.Server.Controllers
             switch (tableName.ToLower())
             {
                 case "items":
-                    if (!long.TryParse(id, out var itemId)) return BadRequest("Invalid ID format.");
+                    if (!long.TryParse(id, out var itemId)) return BadRequest("Неверный формат ID.");
                     var item = await _context.Items.FindAsync(itemId);
                     if (item == null) return NotFound();
                     _context.Items.Remove(item);
                     break;
                 case "users":
-                    if (!int.TryParse(id, out var userId)) return BadRequest("Invalid ID format.");
+                    if (!int.TryParse(id, out var userId)) return BadRequest("Неверный формат ID.");
                     var user = await _context.Users.FindAsync(userId);
                     if (user == null) return NotFound();
                     _context.Users.Remove(user);
                     break;
                 case "orders":
-                    if (!int.TryParse(id, out var orderId)) return BadRequest("Invalid ID format.");
+                    if (!int.TryParse(id, out var orderId)) return BadRequest("Неверный формат ID.");
                     var order = await _context.Orders.FindAsync(orderId);
                     if (order == null) return NotFound();
                     _context.Orders.Remove(order);
                     break;
                 default:
-                    return NotFound($"Table '{tableName}' not found.");
+                    return NotFound($"Таблица '{tableName}' не найдена.");
             }
             await _context.SaveChangesAsync();
             return NoContent();

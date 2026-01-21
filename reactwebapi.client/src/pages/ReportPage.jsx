@@ -1,23 +1,19 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
-// 👇 Импортируем компоненты для ДВУХ типов графиков
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, Title } from 'chart.js';
 import { Pie, Line } from 'react-chartjs-2';
 
-// 👇 "Регистрируем" все необходимые части
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, Title);
 
 const API_BASE_URL = 'http://localhost:5285/api';
 
-// Вспомогательная функция для создания данных для графика
 const createChartJsData = (labels, counts, chartLabel, isLine = false) => ({
     labels,
     datasets: [
         {
             label: chartLabel,
             data: counts,
-            // Для линейного графика используем один цвет с прозрачностью
             backgroundColor: isLine
                 ? 'rgba(0, 123, 255, 0.2)'
                 : ['rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.5)', 'rgba(255, 206, 86, 0.5)', 'rgba(75, 192, 192, 0.5)'],
@@ -25,8 +21,8 @@ const createChartJsData = (labels, counts, chartLabel, isLine = false) => ({
                 ? 'rgba(0, 123, 255, 1)'
                 : ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)'],
             borderWidth: 2,
-            fill: isLine, // Закрашивать только если это линия
-            tension: 0.4, // Делает линию плавной (кривая)
+            fill: isLine, 
+            tension: 0.4, 
         },
     ],
 });
@@ -59,11 +55,10 @@ export default function ReportPage() {
                 }
 
                 if (report.lineChart?.labels && report.lineChart?.counts) {
-                    // 👇 Добавили true в конце, чтобы функция знала, что это линия
                     setLineChartData(createChartJsData(report.lineChart.labels, report.lineChart.counts, 'Динамика / Прогресс', true));
                 }
             } catch (err) {
-                console.error("Failed to fetch report data:", err);
+                console.error("Ошибка получения данных:", err);
                 setError(`Не удалось загрузить отчет для "${tableName}".`);
             }
         };

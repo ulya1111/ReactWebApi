@@ -44,7 +44,7 @@ namespace ReactWebApi.Server.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return Ok("User successfully registered.");
+            return Ok("Пользователь успешно зарегистрирован");
         }
 
        
@@ -54,12 +54,12 @@ namespace ReactWebApi.Server.Controllers
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
             if (user == null)
             {
-                return BadRequest("User not found.");
+                return BadRequest("Пользователь не найден.");
             }
 
             if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
             {
-                return BadRequest("Wrong password.");
+                return BadRequest("Пароль неверный");
             }
 
             try
