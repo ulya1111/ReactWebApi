@@ -8,6 +8,12 @@ ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointE
 
 const API_BASE_URL = 'http://localhost:5285/api';
 
+const tableLabels = {
+    Items: 'Предметы',
+    Users: 'Пользователи',
+    Orders: 'Заказы'
+};
+
 const createChartJsData = (labels, counts, chartLabel, isLine = false) => ({
     labels,
     datasets: [
@@ -69,7 +75,7 @@ export default function ReportPage() {
     return (
         <div className="report-container">
             <div className="main-content-header">
-                <h1 className="title">Отчет по таблице: {tableName}</h1>
+                <h1 className="title">Отчет по таблице: {tableLabels[tableName] || tableName}</h1>
                 <Link to="/" className="btn">Назад к таблицам</Link>
                 <p style={{
                     marginTop: '15px',

@@ -15,6 +15,12 @@ const columnLabels = {
     actions: 'Действия'
 };
 
+const columnDefsConfig = {
+    items: ['id', 'name', 'value'],
+    users: ['id', 'username', 'lastLoginDate'],
+    orders: ['id', 'item', 'quantity', 'status'],
+};
+
 const API_BASE_URL = 'http://localhost:5285/api';
 
 const TanstackGrid = forwardRef(function TanstackGrid({ tableName, onDataChange }, ref) {

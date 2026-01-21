@@ -2,14 +2,14 @@
 import { useNavigate } from "react-router-dom";
 import TanstackGrid from '../components/TanstackGrid.jsx';
 
-export default function HomePage() {
-    const tableLabels = {
+const tableLabels = {
         Items: 'Предметы',
         Users: 'Пользователи',
         Orders: 'Заказы'
     };
+export default function HomePage() {
     const [selectedTable, setSelectedTable] = useState('Items');
-
+    const tables = ['Items', 'Users', 'Orders'];
     const [refreshKey, setRefreshKey] = useState(0);
     const gridRef = useRef();
     const navigate = useNavigate();
@@ -40,11 +40,11 @@ export default function HomePage() {
                 <ul>
                     {tables.map(table => (
                         <li
-                            key={tableLabels[table] || table}
+                            key={table}
                             className={selectedTable === table ? 'active' : ''}
-                            onClick={() => setSelectedTable(table)}
+                            onClick={() => { setSelectedTable(table); forceRefresh(); }}
                         >
-                            {table}
+                            {tableLabels[table] || table}
                         </li>
                     ))}
                 </ul>
@@ -52,7 +52,7 @@ export default function HomePage() {
 
             <section className="main-content">
                 <div className="main-content-header">
-                    <h1 className="title">{selectedTable}</h1>
+                    <h1 className="title">{tableLabels[selectedTable] || selectedTable}</h1>
                     <div className="header-buttons"> 
                         <button className="btn" onClick={handleGoToReport}>Отчет</button>
                         <button className="btn" onClick={handleAddRow}>Добавить запись</button>
