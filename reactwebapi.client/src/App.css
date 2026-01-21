@@ -323,3 +323,21 @@ body {
         text-align: center;
         margin-top: 0;
     }
+
+/* Добавление соритровки */
+
+.tanstack-table th.sortable {
+    cursor: pointer;
+    user-select: none; 
+    position: relative;
+}
+
+.tanstack-table th.sortable:hover {
+    background-color: #e0e0e0;
+}
+
+
+.tanstack-table th.sortable span {
+    margin-left: 5px;
+    font-size: 0.8em;
+}

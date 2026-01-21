@@ -26,32 +26,32 @@ const API_BASE_URL = 'http://localhost:5285/api';
 const TanstackGrid = forwardRef(function TanstackGrid({ tableName, onDataChange }, ref) {
     const [data, setData] = useState([]);
 
-    const loadData = async () => {
-        try {
-            const response = await axios.get(`${API_BASE_URL}/table/${tableName}`);
-            setData(Array.isArray(response.data) ? response.data : []);
-        } catch (error) {
-            console.error(`Ошибка загрузки таблицы ${tableName}:`, error);
-            setData([]);
-        }
-    };
-
     useEffect(() => {
-        loadData();
+        axios.get(`${API_BASE_URL}/table/${tableName}`)
+            .then(response => {
+                const sortedData = Array.isArray(response.data)
+                    ? response.data.sort((a, b) => a.id - b.id)
+                    : [];
+                setData(sortedData);
+            })
+            .catch(error => {
+                console.error(`Ошибка загрузки таблицы ${tableName}:`, error);
+                setData([]);
+            });
     }, [tableName]);
 
     const saveNewRow = async (rowToSave) => {
         const { isNew, id, ...payload } = rowToSave;
         if (tableName.toLowerCase() === 'items' && (!payload.name || payload.name.trim() === '')) {
-            alert("Поле 'NAME' не может быть пустым!");
+            alert("Поле 'Название' обязательно для заполнения.");
             return;
         }
         try {
             await axios.post(`${API_BASE_URL}/table/${tableName}`, payload);
-            onDataChange(); 
+            onDataChange();
         } catch (error) {
-            console.error("Ошибка сохранения:", error);
-            alert("Ошибка при сохранении данных");
+            console.error("Ошибка при создании записи:", error);
+            alert("Не удалось создать запись.");
         }
     };
 
@@ -66,7 +66,8 @@ const TanstackGrid = forwardRef(function TanstackGrid({ tableName, onDataChange 
             await axios.delete(`${API_BASE_URL}/table/${tableName}/${rowId}`);
             onDataChange();
         } catch (error) {
-            console.error("Ошибка удаления:", error);
+            console.error("Ошибка при удалении записи:", error);
+            alert("Не удалось удалить запись.");
         }
     };
 
@@ -76,43 +77,39 @@ const TanstackGrid = forwardRef(function TanstackGrid({ tableName, onDataChange 
 
     const columns = useMemo(() => {
         const fields = columnDefsConfig[tableName.toLowerCase()] || [];
-
         const tableColumns = fields.map(field => {
             if (field === 'lastLoginDate') {
                 return {
                     accessorKey: field,
-                    header: 'ПОСЛЕДНИЙ ВХОД',
+                    header: columnLabels[field] || field.toUpperCase(),
                     cell: info => {
                         const val = info.getValue();
                         return val ? new Date(val).toLocaleString('ru-RU') : 'Никогда';
                     }
                 };
             }
-
             return {
                 accessorKey: field,
                 header: columnLabels[field] || field.toUpperCase(),
                 cell: (info) => {
-                    const isNew = info.row.original?.isNew;
-                    if (isNew || field !== 'id') {
+                    if (info.row.original?.isNew || field !== 'id') {
                         return <EditableCell {...info} />;
                     }
                     return info.getValue();
                 }
             };
         });
-
         return [
             ...tableColumns,
             {
                 id: 'actions',
-                header: 'Действия',
+                header: columnLabels['actions'],
                 cell: ({ row }) => (
                     <div style={{ textAlign: 'center' }}>
                         {row.original?.isNew ? (
                             <button className="btn" style={{ backgroundColor: '#28a745' }} onClick={() => saveNewRow(row.original)}>Сохранить</button>
                         ) : (
-                            <button className="btn delete" onClick={() => removeRow(row.index)}>X</button>
+                            <button className="btn delete" onClick={() => removeRow(row.index)}>Удалить</button>
                         )}
                     </div>
                 ),
@@ -126,16 +123,29 @@ const TanstackGrid = forwardRef(function TanstackGrid({ tableName, onDataChange 
         getCoreRowModel: getCoreRowModel(),
         meta: {
             updateData: (rowIndex, columnId, value) => {
-                setData(old => old.map((row, index) => index === rowIndex ? { ...row, [columnId]: value } : row));
+                setData(old => old.map((row, index) => (index === rowIndex ? { ...row, [columnId]: value } : row)));
                 const rowToUpdate = data[rowIndex];
                 if (rowToUpdate && !rowToUpdate.isNew) {
                     axios.put(`${API_BASE_URL}/table/${tableName}/${rowToUpdate.id}`, { [columnId]: value })
                         .then(() => onDataChange())
-                        .catch(err => console.error("Ошибка PUT:", err));
+                        .catch(err => {
+                            console.error("Ошибка при обновлении записи:", err);
+                            onDataChange();
+                        });
                 }
             },
         },
     });
+
+    const sortById = () => {
+        const sorted = [...data].sort((a, b) => {
+            if (data.length > 1 && data[0].id < data[1].id) {
+                return b.id - a.id;
+            }
+            return a.id - b.id;
+        });
+        setData(sorted);
+    };
 
     return (
         <div className="table-container">
@@ -143,9 +153,19 @@ const TanstackGrid = forwardRef(function TanstackGrid({ tableName, onDataChange 
                 <thead>
                     {table.getHeaderGroups().map(hg => (
                         <tr key={hg.id}>
-                            {hg.headers.map(h => (
-                                <th key={h.id}>{flexRender(h.column.columnDef.header, h.getContext())}</th>
-                            ))}
+                            {hg.headers.map(h => {
+                                const isIdColumn = h.id === 'id';
+                                return (
+                                    <th
+                                        key={h.id}
+                                        colSpan={h.colSpan}
+                                        className={isIdColumn ? 'sortable id-header' : ''}
+                                        onClick={isIdColumn ? sortById : undefined}
+                                    >
+                                        {flexRender(h.column.columnDef.header, h.getContext())}
+                                    </th>
+                                );
+                            })}
                         </tr>
                     ))}
                 </thead>
